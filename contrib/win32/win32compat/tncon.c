@@ -119,7 +119,7 @@ GetModifierKey(DWORD dwControlKeyState)
 	if (modKey){
 		memset(tmp_buf, 0, sizeof(tmp_buf));
 		modKey++;
-	}		
+	}
 
 	return modKey;
 }
@@ -188,7 +188,10 @@ ReadConsoleForTermEmul(HANDLE hInput, char *destin, int destinlen)
 					}
 
 					if (isConsoleVTSeqAvailable) {
-						if (inputRecord.Event.KeyEvent.uChar.UnicodeChar != L'\0') {
+						DWORD dwControlKeyState = inputRecord.Event.KeyEvent.dwControlKeyState;
+						DWORD dwCtrlPressed = (dwControlKeyState & LEFT_CTRL_PRESSED);
+						if (inputRecord.Event.KeyEvent.uChar.UnicodeChar != L'\0') ||
+							(dwCtrlPressed && inputRecord.Event.KeyEvent.wVirtualKeyCode == 50)) {
 							n = WideCharToMultiByte(
 								CP_UTF8,
 								0,
